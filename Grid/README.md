@@ -1,2 +1,0 @@
-# Web-Programming-basic-Concepts.
-This is a revision of the basic concepts of web programming, focusing on the grid system. The grid system is a powerful layout tool that allows developers to create responsive and structured designs.
