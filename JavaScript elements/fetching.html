@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fetching Random people and JSONPlaceholder CRUD</title>
+</head>
+<body>
+    <button onclick="getRandomUser()">Get random user</button>
+    <div class="output"></div>
+    <button onclick="deleteData(2)">Delete data</button>
+
+<script>
+    // URL për marrje përdoruesish nga randomuser.me
+    let url = "https://randomuser.me/api/?results=6";
+    let outputDiv = document.querySelector(".output");
+
+    function getRandomUser(){
+        outputDiv.innerHTML = '';
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.results[0].name);
+            console.log(data.results[0].picture.thumbnail);
+
+            data.results.forEach((value, index) => {
+                let elementDiv = document.createElement('div');
+                elementDiv.style.marginTop = "15px";
+                elementDiv.textContent = `${index + 1} ${value.name.title} ${value.name.first} ${value.name.last}`;
+
+                let elementImg = document.createElement("img");
+                elementImg.src = value.picture.thumbnail;
+                elementImg.style.display = "block";
+
+                elementDiv.appendChild(elementImg);
+                outputDiv.appendChild(elementDiv);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+    }
+
+    // PATCH - përditësim i pjesshëm në JSONPlaceholder
+    function patchData(id, partial){
+        const patchurl = `https://jsonplaceholder.typicode.com/posts/${id}`;
+        
+        fetch(patchurl, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(partial)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Partial update successful:', data);
+        })
+        .catch(error => {
+            console.error("Error patching data", error);
+        });
+    }
+
+    // DELETE - fshirje në JSONPlaceholder
+    function deleteData(id){
+        const deleteurl = `https://jsonplaceholder.typicode.com/posts/${id}`;
+        
+        fetch(deleteurl, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if(response.ok){
+                console.log("Delete successful!");
+            } else {
+                console.error("Something went wrong");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+// Metoda PUT për të përditësuar të dhëna ekzistuese
+function putData(id,updatedData){
+    const url = `https://jsonplaceholder.typicode.com/posts/${id}`;
+
+    fetch(url,{
+        method:'PUT',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(updatedData)
+    })
+    .then(response => response.json())
+    .then(data =>{
+        console.log("Put succses",data);
+    })
+    .catch(error=>{
+        console.error("Error:",error);
+    })
+
+}
+// Metoda POST për të shtuar të dhëna të reja
+function postData(newData){
+    const posturl = "https://jsonplaceholder.typicode.com/posts";
+
+    fetch(posturl,{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(newData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Post successuf",data);
+    })
+    .catch(error => {
+        console.error("Error:",error);
+    });
+    
+}
+
+
+
+</script>
+    
+</body>
+</html>
