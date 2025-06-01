@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random User with a table</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: beige;
+    }
+    th, td {
+      border: 2px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      text-align: center;
+      background-color: azure;
+    }
+    td img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 8px 12px;
+      font-size: 16px;
+      background-color: rgb(215, 239, 239);
+    }
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body onload="fetchUsers(currentPage)">
+  <div class="container">
+    <h1>Random User Data</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Number</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Picture</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="buttons">
+      <button id="prevBtn" onclick="onPreviusClick()">Previous</button>
+      <button id="nxtBtn" onclick="onNextClick()">Next</button>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const resultsPerPage = 5;
+    const tbody = document.querySelector('tbody');
+    const prevBtn = document.getElementById('prevBtn');
+    const nxtBtn = document.getElementById('nxtBtn');
+
+    function fetchUsers(page) {
+      fetch(`https://randomuser.me/api/?page=${page}&results=${resultsPerPage}&seed=abc`)
+        .then(response => response.json())
+        .then(data => {
+          tbody.innerHTML = '';
+
+          data.results.forEach((user, index) => {
+            const row = `
+              <tr>
+                <td>${(currentPage - 1) * resultsPerPage + index + 1}</td>
+                <td>${user.name.first}</td>
+                <td>${user.name.last}</td>
+                <td>${user.email}</td>
+                <td>${user.dob.age}</td>
+                <td><img src="${user.picture.medium}" /></td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+
+          prevBtn.disabled = currentPage === 1;
+
+          if (currentPage > 10) {
+            nxtBtn.style.display = 'none';
+          } else {
+            nxtBtn.style.display = 'inline-block';
+          }
+        })
+        .catch(error => console.error('Error', error));
+    }
+
+    function onNextClick() {
+      currentPage++;
+      fetchUsers(currentPage);
+    }
+
+    function onPreviusClick() {
+      if (currentPage > 1) {
+        currentPage--;
+        fetchUsers(currentPage);
+      }
+    }
+  </script>
+</body>
+</html>
